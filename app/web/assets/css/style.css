@@ -1,0 +1,12 @@
+label {
+    min-width: 100px;
+}
+input {
+    min-width: 200px;
+}
+#post > div {
+    margin-bottom: 11px;
+}
+#footer-copyright {
+    margin-top: 21px;
+}

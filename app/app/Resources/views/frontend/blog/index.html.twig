@@ -1,0 +1,31 @@
+{% extends 'frontend/layout.html.twig' %}
+
+{% block main %}
+    <div id="wrapper">
+        <div id="container">
+            <h1>Recent blog posts</h1>
+            <div class="posts">
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="post">
+                        <h2>{{ post.title }}</h2>
+                        <p class="date">{{ post.date|date('d. m. Y') }}</p>
+                        <a href="{{ path('frontend_post_detail', {slug: post.slug}) }}" class="btn btn-sm btn-default">Detail</a>
+                    </div>
+                {% endfor %}
+                
+                {% if (postsLeft > 0) %}
+                    {% set lastPost = posts|last %}
+                    <a href="{{ path('frontend_homepage', {cursor: lastPost.date|date('Y-m-d H:i:s')}) }}" class="btn btn-sm btn-primary" style="margin-top: 21px">More posts</a>
+                {% endif %}
+            {% else %}
+                <div class="not-found">
+                    <p>No posts found</p>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

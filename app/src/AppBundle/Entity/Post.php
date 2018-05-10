@@ -4,17 +4,22 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Post
  *
  * @ORM\Table(name="post")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\PostRepository")
+ * @ORM\Table(indexes={@ORM\Index(name="date_index", columns={"date"})})
+ * @UniqueEntity(fields={"slug"}, message="Url Slug {{ value }} already exists")
  */
 class Post
 {
     /**
-     * @var int
+     * @var string
      *
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="UUID")
@@ -26,171 +31,154 @@ class Post
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=150)
+     * @Assert\Length(max=150, maxMessage="post.too_long_title")
      */
     private $title;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="text", type="text")
+     * @ORM\Column(name="text", type="text", nullable=true)
      */
     private $text;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="Date", type="datetime")
+     * @ORM\Column(name="date", type="datetime")
      */
     private $date;
 
     /**
-     * @var array
+     * @var Tag[]|ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="Tag", inversedBy="posts")
-     * @ORM\JoinTable(name="posts_tags")
+     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\Tag", cascade={"persist"})
+     * @ORM\JoinTable(name="post_tags")
+     * @ORM\OrderBy({"name": "ASC"})
      */
     private $tags;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=255, unique=true)
+     * @ORM\Column(name="slug", type="string", length=255, unique=true)
+     * @Assert\Length(max=255, maxMessage="post.too_long_slug")
      */
-    private $url;
+    private $slug;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    private $isActive;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="views_count", type="integer")
+     */
+    private $viewsCount;
 
 
     public function __construct() {
+        $this->date = new \DateTime();
         $this->tags = new ArrayCollection();
+        $this->isActive = true;
+        $this->viewsCount = 0;
     }
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * Set title
-     *
-     * @param string $title
-     *
-     * @return Post
-     */
-    public function setTitle($title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 
-    /**
-     * Get title
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * Set text
-     *
-     * @param string $text
-     *
-     * @return Post
-     */
-    public function setText($text)
+    public function setText(string $text): void
     {
         $this->text = $text;
-
-        return $this;
     }
 
-    /**
-     * Get text
-     *
-     * @return string
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     *
-     * @return Post
-     */
-    public function setDate($date)
+    public function setDate(?\DateTime $date): void
     {
         $this->date = $date;
-
-        return $this;
     }
 
-    /**
-     * Get date
-     *
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): ?\DateTime
     {
         return $this->date;
     }
 
-    /**
-     * Set tags
-     *
-     * @param array $tags
-     *
-     * @return Post
-     */
-    public function setTags($tags)
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    /**
-     * Get tags
-     *
-     * @return array
-     */
-    public function getTags()
+    public function getTags(): ?Collection
     {
         return $this->tags;
     }
 
-    /**
-     * Set url
-     *
-     * @param string $url
-     *
-     * @return Post
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
+    public function getTagsArray(): ?array {
+        $array = []; 
+        foreach ($this->tags as $tag) {
+            $array['name'] = $tag->getName();
+        }
 
-        return $this;
+        return $array;
     }
 
-    /**
-     * Get url
-     *
-     * @return string
-     */
-    public function getUrl()
+    public function addTag(?Tag ...$tags): void
     {
-        return $this->url;
+        foreach ($tags as $tag) {
+            if (!$this->tags->contains($tag)) {
+                $this->tags->add($tag);
+            }
+        }
+    }
+
+    public function removeTag(Tag $tag): void
+    {
+        $this->tags->removeElement($tag);
+    }
+
+    public function setSlug(?string $slug): void
+    {
+        $this->slug = $slug;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setViewsCount(int $viewsCount): void
+    {
+        $this->viewsCount = $viewsCount;
+    }
+
+    public function getViewsCount(): ?int
+    {
+        return $this->viewsCount;
     }
 }
 

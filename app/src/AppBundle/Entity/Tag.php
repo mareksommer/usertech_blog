@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Tag
@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection as ArrayCollection;
  * @ORM\Table(name="tag")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TagRepository")
  */
-class Tag
+class Tag implements \JsonSerializable
 {
     /**
      * @var int
@@ -25,50 +25,36 @@ class Tag
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=150)
+     * @ORM\Column(name="name", type="string", unique=true, length=150)
+     * @Assert\NotBlank
+     * @Assert\Length(max=150, maxMessage="tag.too_long_name")
      */
     private $name;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Post", mappedBy="tags")
-     */
-    private $posts;
-
-
-    public function __construct() {
-        $this->posts = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return Tag
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
+    }
 
-        return $this;
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**
-     * Get name
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getName()
+    public function jsonSerialize(): string
+    {
+        return $this->name;
+    }
+
+    public function __toString(): string
     {
         return $this->name;
     }

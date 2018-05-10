@@ -1,0 +1,12 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block main %}
+    <h1>Edit post</h1>
+
+    {{ include('admin/post/_form.html.twig', {
+        form: form,
+        button_label: 'save',
+        include_back_to_home_link: true,
+    }, with_context = false) }}
+{% endblock %}
+

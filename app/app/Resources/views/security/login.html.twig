@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+
+    <div class="form form--slim form--login">
+        <h2 class="form_header">Login</h2>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <form action="{{ path('security_login') }}" method="post">
+            <div class="row">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="_username" value="{{ last_username }}" />
+            </div>
+            <div class="row">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="_password" />
+            </div>
+            <div class="row">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="button button--green">Login</button>
+            </div>
+
+            {% if error %}
+                <div class="login_error"><i class="fas fa-exclamation-circle"></i> {{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+        </form>
+
+    </div>
+{% endblock %}

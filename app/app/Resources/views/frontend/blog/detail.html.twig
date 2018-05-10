@@ -1,0 +1,18 @@
+{% extends 'frontend/layout.html.twig' %}
+
+{% block main %}
+    <div id="wrapper">
+        <div id="container">
+            {% if post %}
+                <h1>{{ post.title }}</h1>
+                <div class="content">
+                    {{ post.text | raw }}
+                </div>
+            {% else %}
+                <h1>Sorry, we can't find your post...</h1>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+

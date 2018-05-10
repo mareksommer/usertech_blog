@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -10,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="users")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User
+class User implements UserInterface, \Serializable
 {
     /**
      * @var int
@@ -25,20 +27,23 @@ class User
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\Length(max=255, maxMessage="user.too_long_name")
      */
     private $name;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @ORM\Column(name="username", type="string", length=255, unique=true)
+     * @Assert\Length(max=255, maxMessage="user.too_long_username")
      */
-    private $email;
+    private $username;
 
     /**
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255)
+     * @Assert\Length(max=255, maxMessage="user.too_long_password")
      */
     private $password;
 
@@ -49,111 +54,113 @@ class User
      */
     private $roles;
 
-
     /**
-     * Get id
+     * @var boolean
      *
-     * @return int
+     * @ORM\Column(name="is_active", type="boolean")
      */
-    public function getId()
+    private $isActive;
+
+
+    public function __construct()
+    {
+        $this->isActive = true;
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return User
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return User
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return User
-     */
-    public function setPassword($password)
+    public function setPassword(string $password): void
     {
         $this->password = $password;
-
-        return $this;
     }
 
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    /**
-     * Set roles
-     *
-     * @param array $roles
-     *
-     * @return User
-     */
-    public function setRoles($roles)
+    public function setRoles(array $roles): void
     {
         $this->roles = $roles;
+    }
 
-        return $this;
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+
+        // guarantees that a user always has at least one role for security
+        if (empty($roles)) {
+            $roles[] = 'ROLE_USER';
+        }
+
+        return array_unique($roles);
+    }
+
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
+    }
+
+    public function getIsActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    public function setUsername(string $username):void
+    {
+        $this->username = $username;
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    public function eraseCredentials()
+    {
+
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
     }
 
     /**
-     * Get roles
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    public function getRoles()
-    {
-        return $this->roles;
-    }
+     public function serialize(): string
+     {
+         return serialize(array(
+             $this->id,
+             $this->username,
+             $this->password,
+         ));
+     }
+ 
+    /**
+     * {@inheritdoc}
+     */
+     public function unserialize($serialized): void
+     {
+         list (
+             $this->id,
+             $this->username,
+             $this->password,
+         ) = unserialize($serialized, ['allowed_classes' => false]);
+     }
 }
 

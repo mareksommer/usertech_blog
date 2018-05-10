@@ -1,3 +1,14 @@
-app:
-    resource: '@AppBundle/Controller/'
+Admin:
+    resource: '\AppBundle\Controller\Admin\PostController'
     type: annotation
+
+Security:
+    resource: '\AppBundle\Controller\Security\SecurityController'
+    type: annotation
+
+Frontend:
+    resource: '\AppBundle\Controller\BlogController'
+    type: annotation
+
+API:
+    resource: '\AppBundle\Controller\API\APIController'

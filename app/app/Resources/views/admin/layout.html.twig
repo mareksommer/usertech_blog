@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap-tagsinput.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block header_navigation_links %}
+    <li>
+        <a href="{{ path('frontend_homepage') }}">
+            Frontend
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('admin_homepage') }}">
+            Posts
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('admin_edit_post') }}">
+            New post
+        </a>
+    </li>
+{% endblock %}
+
