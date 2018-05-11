@@ -22,6 +22,7 @@ $ docker-compose up -d
 $docker ps -a
 ```
 copy name of your docker www container
+
 5. run 
 ```
 $ docker exec -it <container_name> /bin/bash
@@ -52,8 +53,13 @@ $ php bin/console server:start
 7. browse to localhost:8000
 
 ## Notes
-- blog has one predefined user with credentails: username: admin, password: admin
+- blog has one predefined user with credentials: username: admin, password: admin
 - you can run applicatoin with debug bar at /app_dev.php
 - symfony application is in app folder in usertech_blog directory
+- for pagination I use simple cursor based pagination, in real application it should be served with some infinite scroll or at least AJAX load button
+
+### Api endpoints
+- /api/posts-list
+- /api/post/{id} id example: cc1ffac0-53c6-11e8-9609-0242ac1e0003
 
 Have fun :)
