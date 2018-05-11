@@ -6,40 +6,54 @@ You can choose from two methods - with or without docker
 ## Install using docker
 1. git clone this repo
 ```
-git clone https://github.com/mareksommer/usertech_blog.git usertech_blog
+$ git clone https://github.com/mareksommer/usertech_blog.git usertech_blog
 ```
 2. add usertechblog.local to your hosts file
-3. go to cloned directory
+3. go to newly created folder
 ```
-$cd usertech_blog
+$ cd usertech_blog
 ```
 3. compose docker
 ```
-$docker compose up -d
+$ docker-compose up -d
 ```
-4. run 
+4. run
 ```
-$docker exec -it <container_id_or_name> composer install
+$docker ps -a
 ```
-5. at localhost:8090 you'll find PHPMyAdmin (credentials: admin pass), there you can import usertech_blog_db.sql
-6. browse to the usertechblog.local 
+copy name of your docker www container
+5. run 
+```
+$ docker exec -it <container_name> /bin/bash
+$ composer install
+```
+6. at localhost:8090 you'll find PHPMyAdmin (credentials: admin pass), there you can import usertech_blog_db.sql
+7. browse to the usertechblog.local 
 
 ## Install without docker
 1. git clone this repo
 ```
-git clone https://github.com/mareksommer/usertech_blog.git usertech_blog
+$ git clone https://github.com/mareksommer/usertech_blog.git usertech_blog
 ```
-2. 
+2. go to app directory inside newly created folder
 ```
-$cd usertech_blog
+$ cd usertech_blog/app
 ```
 3. run 
 ```
-$composer install
+$ composer install
 ```
 4. create db and import usertech_blog_db.sql
 5. set app/config/parameters.yml accordingly to your database
 6. inside usertech_blog folder run 
 ```
-php bin/console server:start
+$ php bin/console server:start
 ```
+7. browse to localhost:8000
+
+## Notes
+- blog has one predefined user with credentails: username: admin, password: admin
+- you can run applicatoin with debug bar at /app_dev.php
+- symfony application is in app folder in usertech_blog directory
+
+Have fun :)
